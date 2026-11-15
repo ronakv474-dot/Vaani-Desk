@@ -1,0 +1,10 @@
+{
+  "name": "VaaniDesk — Dukaan ka voice khata",
+  "short_name": "VaaniDesk",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#EEF0F3",
+  "theme_color": "#EEF0F3",
+  "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}
