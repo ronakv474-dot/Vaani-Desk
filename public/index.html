@@ -1,16 +1,16 @@
 <!doctype html>
-<html lang="hi">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#EEF0F3">
+  <meta name="theme-color" content="#FFF6EA">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icon.svg">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="VaaniDesk">
-  <title>VaaniDesk — Dukaan ka voice khata</title>
+  <title>VaaniDesk — Voice ledger for shops</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -22,7 +22,7 @@
   <div class="app">
     <header class="top">
       <div>
-        <p class="hello">Namaste, <b id="ownerName">Ramesh</b> ji 👋</p>
+        <p class="hello">Hello, <b id="ownerName">Ramesh</b> 👋</p>
         <p class="place"><span class="dot"></span><span id="shopName">Ramesh Kirana Store</span></p>
       </div>
       <button id="bell" class="icon-btn" type="button" aria-label="Alerts">
@@ -33,26 +33,26 @@
 
     <div id="alertBanner" class="alert" hidden>
       <span>🚨 <b>Emergency:</b> <span id="alertText"></span></span>
-      <button id="alertDismiss" type="button">Dekh liya</button>
+      <button id="alertDismiss" type="button">Dismiss</button>
     </div>
 
     <!-- HOME -->
     <section id="screen-home" class="screen">
       <div class="hero">
         <div>
-          <p class="hero-label">Kul udhaari baaki</p>
+          <p class="hero-label">Total credit pending</p>
           <p id="hTotal" class="hero-num">₹0</p>
-          <p class="hero-sub"><span id="hCustomers">0</span> customers se lena hai</p>
+          <p class="hero-sub"><span id="hCustomers">0</span> customers owe you</p>
         </div>
         <div class="hero-icon">₹</div>
       </div>
 
       <div class="voice card">
-        <button id="ownerMic" class="mic" type="button" aria-label="Bolke likho">
+        <button id="ownerMic" class="mic" type="button" aria-label="Speak to add entry">
           <svg viewBox="0 0 24 24"><path d="M12 15a3.5 3.5 0 0 0 3.5-3.5v-6a3.5 3.5 0 1 0-7 0v6A3.5 3.5 0 0 0 12 15Zm6-3.5a6 6 0 0 1-12 0H4.5a7.5 7.5 0 0 0 6.75 7.46V22h1.5v-3.04a7.5 7.5 0 0 0 6.75-7.46Z"/></svg>
         </button>
-        <p class="voice-title">Bolke khata likho</p>
-        <p id="ownerStatus" class="status">Mic dabao, bolo, phir dobara dabao</p>
+        <p class="voice-title">Speak to update your ledger</p>
+        <p id="ownerStatus" class="status">Tap the mic, speak in Hindi, tap again</p>
         <div id="ownerHeard" class="heard" hidden></div>
         <div id="ownerReply" class="reply" hidden></div>
         <span class="lat chip" hidden></span>
@@ -63,18 +63,18 @@
           <button class="try" type="button">Sharma ji ka hisaab batao</button>
         </div>
         <form id="ownerForm" class="textform">
-          <input id="ownerInput" type="text" autocomplete="off" placeholder="Ya yahan likho…">
-          <button type="submit" aria-label="Bhejo">➜</button>
+          <input id="ownerInput" type="text" autocomplete="off" placeholder="Or type here…">
+          <button type="submit" aria-label="Send">➜</button>
         </form>
       </div>
 
       <div class="minis">
-        <div class="mini card"><b id="mEntries">0</b><span>Aaj ki entries</span></div>
-        <div class="mini card"><b id="mJama">₹0</b><span>Aaj jama hua</span></div>
+        <div class="mini card"><b id="mEntries">0</b><span>Today's entries</span></div>
+        <div class="mini card"><b id="mJama">₹0</b><span>Received today</span></div>
         <div class="mini card"><b id="mCalls">0</b><span>Customer calls</span></div>
       </div>
 
-      <div class="sec-head"><h3>Haal ki entries</h3><button class="link" data-go="khata" type="button">Sab dekho ›</button></div>
+      <div class="sec-head"><h3>Recent entries</h3><button class="link" data-go="khata" type="button">View all ›</button></div>
       <ul id="recent" class="cards"></ul>
     </section>
 
@@ -82,10 +82,10 @@
     <section id="screen-khata" class="screen" hidden>
       <div class="search card">
         <svg viewBox="0 0 24 24"><path d="M10.5 3a7.5 7.5 0 0 1 5.9 12.1l4.7 4.8-1.1 1.1-4.8-4.7A7.5 7.5 0 1 1 10.5 3Zm0 1.5a6 6 0 1 0 0 12 6 6 0 0 0 0-12Z"/></svg>
-        <input id="search" type="search" placeholder="Customer dhoondho">
+        <input id="search" type="search" placeholder="Search customer">
       </div>
       <div class="seg card" role="radiogroup" aria-label="Reminder tone">
-        <span>Yaad dilane ka tone</span>
+        <span>Reminder tone</span>
         <div>
           <button class="seg-btn active" data-tone="soft" type="button">Soft</button>
           <button class="seg-btn" data-tone="normal" type="button">Normal</button>
@@ -98,13 +98,13 @@
     <section id="screen-grahak" class="screen" hidden>
       <div class="card info">
         <b>Customer line (demo)</b>
-        <p>Customer dukaan ko call kare to VaaniDesk jawab deta hai: timing, pata, order ka message. Yahan customer ban ke bolo.</p>
+        <p>When a customer calls the shop, VaaniDesk answers: opening hours, address, and takes order messages for the owner. Speak here as the customer.</p>
       </div>
       <div class="voice card">
-        <button id="mic" class="mic dark" type="button" aria-label="Customer ban ke bolo">
+        <button id="mic" class="mic dark" type="button" aria-label="Speak as customer">
           <svg viewBox="0 0 24 24"><path d="M12 15a3.5 3.5 0 0 0 3.5-3.5v-6a3.5 3.5 0 1 0-7 0v6A3.5 3.5 0 0 0 12 15Zm6-3.5a6 6 0 0 1-12 0H4.5a7.5 7.5 0 0 0 6.75 7.46V22h1.5v-3.04a7.5 7.5 0 0 0 6.75-7.46Z"/></svg>
         </button>
-        <p id="status" class="status">Customer ban ke bolo: "Dukaan kab khulti hai?"</p>
+        <p id="status" class="status">Try: "Dukaan kab khulti hai?"</p>
         <span class="lat chip" hidden></span>
         <div id="bubbles" class="bubbles" aria-live="polite"></div>
         <div class="chips">
@@ -113,32 +113,32 @@
           <button class="try2" type="button">Kal home delivery chahiye</button>
         </div>
         <form id="textForm" class="textform">
-          <input id="textInput" type="text" autocomplete="off" placeholder="Ya yahan likho…">
-          <button type="submit" aria-label="Bhejo">➜</button>
+          <input id="textInput" type="text" autocomplete="off" placeholder="Or type here…">
+          <button type="submit" aria-label="Send">➜</button>
         </form>
-        <button id="newCall" class="ghost" type="button">↺ Nayi call</button>
+        <button id="newCall" class="ghost" type="button">↺ New call</button>
       </div>
-      <div class="sec-head"><h3>Callback chahiye</h3></div>
+      <div class="sec-head"><h3>Needs a callback</h3></div>
       <ul id="callbacks" class="cards"></ul>
       <div class="sec-head"><h3>Call log</h3></div>
       <ul id="callLog" class="cards"></ul>
       <div class="tools">
-        <button id="exportLog" class="ghost" type="button">Log export</button>
-        <button id="resetData" class="ghost" type="button">Demo data saaf karo</button>
+        <button id="exportLog" class="ghost" type="button">Export log</button>
+        <button id="resetData" class="ghost" type="button">Clear demo data</button>
       </div>
     </section>
 
-    <p class="foot">AI assistant · Audio store nahi hota · Data sirf is phone/browser mein</p>
+    <p class="foot">AI assistant · Audio is never stored · Data stays on this device</p>
 
     <nav class="nav" aria-label="Menu">
       <button class="nav-btn active" data-go="home" type="button">
         <svg viewBox="0 0 24 24"><path d="M12 3 3 10.5V21h6v-6h6v6h6V10.5Z"/></svg><span>Home</span>
       </button>
       <button class="nav-btn" data-go="khata" type="button">
-        <svg viewBox="0 0 24 24"><path d="M5 3h11l3 3v15H5Zm3 5v1.5h8V8Zm0 4v1.5h8V12Zm0 4v1.5h5V16Z"/></svg><span>Khata</span>
+        <svg viewBox="0 0 24 24"><path d="M5 3h11l3 3v15H5Zm3 5v1.5h8V8Zm0 4v1.5h8V12Zm0 4v1.5h5V16Z"/></svg><span>Ledger</span>
       </button>
       <button class="nav-btn" data-go="grahak" type="button">
-        <svg viewBox="0 0 24 24"><path d="M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1Z"/></svg><span>Grahak</span>
+        <svg viewBox="0 0 24 24"><path d="M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1Z"/></svg><span>Customers</span>
       </button>
     </nav>
   </div>

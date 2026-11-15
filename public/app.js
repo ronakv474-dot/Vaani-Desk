@@ -33,10 +33,10 @@
   function makeRecorder(btn, statusEl, onBlob) {
     let rec = null, timer = null;
     async function start() {
-      if (!navigator.mediaDevices || !window.MediaRecorder) { setStatus(statusEl, 'Is browser mein mic nahi chalta. Neeche likh ke bhejo.', true); return; }
+      if (!navigator.mediaDevices || !window.MediaRecorder) { setStatus(statusEl, 'Mic is not supported in this browser. Please type instead.', true); return; }
       let stream;
       try { stream = await navigator.mediaDevices.getUserMedia({ audio: true }); }
-      catch (e) { setStatus(statusEl, 'Mic ki permission nahi mili. Address bar mein 🔒 dabake mic Allow karo, ya likh ke bhejo.', true); return; }
+      catch (e) { setStatus(statusEl, 'Mic permission denied. Click 🔒 in the address bar and allow the mic, or type instead.', true); return; }
       const chunks = [];
       rec = new MediaRecorder(stream);
       rec.ondataavailable = (e) => e.data.size && chunks.push(e.data);
@@ -50,7 +50,7 @@
       };
       rec.start();
       btn.classList.add('rec');
-      setStatus(statusEl, '● Sun raha hoon… bolke dobara dabao');
+      setStatus(statusEl, '● Listening… tap again when done');
       timer = setTimeout(() => rec && rec.stop(), 25000);
     }
     btn.addEventListener('click', () => { if (btn.disabled) return; if (rec && rec.state === 'recording') rec.stop(); else start(); });
@@ -85,10 +85,10 @@
   function prefetchFiller() { if (fillerTried) return; fillerTried = true; tts(C.filler).catch(() => { fillerTried = false; }); }
 
   async function speak(text, st) {
-    setStatus(st, '🔊 Bol raha hoon…');
+    setStatus(st, '🔊 Speaking…');
     const t1 = performance.now();
     try { const { url, cached } = await tts(text); const ms = Math.round(performance.now() - t1); await play(url); return { ttsMs: ms, cached }; }
-    catch (e) { if (e.status === 429) await playFiller(); setStatus(st, 'Awaaz nahi ban payi, jawab likha hua hai.', true); return { ttsMs: null }; }
+    catch (e) { if (e.status === 429) await playFiller(); setStatus(st, 'Voice unavailable. The reply is shown above.', true); return { ttsMs: null }; }
   }
 
   function showLatency(sttMs, ttsMs, totalMs) {
@@ -111,15 +111,15 @@
     setBusy(true);
     const t0 = performance.now();
     try {
-      setStatus(st, 'Samajh raha hoon…');
+      setStatus(st, 'Understanding…');
       const wav = await toWav16k(blob);
-      if (wav.size > 1.5 * 1024 * 1024) throw new ApiError('Thoda chhota bolo (max ~25 sec)', 413);
+      if (wav.size > 1.5 * 1024 * 1024) throw new ApiError('Please keep it under 25 seconds', 413);
       const text = await stt(wav);
-      if (!text.trim()) { setStatus(st, 'Kuch sunai nahi diya. Dobara bolo.', true); return; }
+      if (!text.trim()) { setStatus(st, 'Could not hear anything. Please try again.', true); return; }
       await turn(text, Math.round(performance.now() - t0), t0);
     } catch (e) {
-      if (e.status === 429) { await playFiller(); setStatus(st, 'Server busy hai. 2 second baad dobara bolo.', true); }
-      else setStatus(st, 'Awaaz process nahi hui. Likh ke bhejo.', true);
+      if (e.status === 429) { await playFiller(); setStatus(st, 'Server is busy. Try again in 2 seconds.', true); }
+      else setStatus(st, 'Could not process audio. Please type instead.', true);
     } finally { setBusy(false); }
   }
   async function runText(text, turn) {
@@ -143,7 +143,7 @@
     const totalMs = Math.round(performance.now() - t0);
     S.logTurn({ session: 'owner', mode: 'owner', text, reply: r.reply.text, intent: parsed.intent, lang: parsed.lang, sttMs, ttsMs: lat.ttsMs, totalMs });
     showLatency(sttMs, lat.ttsMs, totalMs);
-    if (lat.ttsMs != null) setStatus(st, 'Ho gaya ✓  Agli entry ke liye mic dabao');
+    if (lat.ttsMs != null) setStatus(st, 'Done ✓  Tap the mic for the next entry');
     prefetchFiller();
   }
 
@@ -168,7 +168,7 @@
     const totalMs = Math.round(performance.now() - t0);
     S.logTurn({ session, mode: 'caller', text, reply: r.reply.text, intent: parsed.intent, lang: parsed.lang, sttMs, ttsMs: lat.ttsMs, totalMs });
     showLatency(sttMs, lat.ttsMs, totalMs);
-    if (lat.ttsMs != null) setStatus(st, 'Customer ban ke agla sawaal bolo');
+    if (lat.ttsMs != null) setStatus(st, 'Ask the next question as the customer');
     prefetchFiller();
   }
 
@@ -191,13 +191,13 @@
         const blob = await (await fetch(url)).blob();
         const file = new File([blob], 'yaad-' + row.name.replace(/\W+/g, '-') + '.mp3', { type: blob.type || 'audio/mpeg' });
         if (navigator.canShare({ files: [file] })) {
-          const b = document.createElement('button'); b.type = 'button'; b.className = 'share'; b.textContent = '🎧 Voice note bhejo';
+          const b = document.createElement('button'); b.type = 'button'; b.className = 'share'; b.textContent = '🎧 Send voice note';
           b.onclick = () => navigator.share({ files: [file], text: msg.text }).catch(() => {});
           btns.appendChild(b);
         }
       }
     } catch (e) {
-      const p = document.createElement('small'); p.textContent = 'Voice note nahi bana, text WhatsApp se bhej do.'; box.appendChild(p);
+      const p = document.createElement('small'); p.textContent = 'Voice note failed. You can still send the text on WhatsApp.'; box.appendChild(p);
     }
   }
 
@@ -205,7 +205,7 @@
   const rupee = (n) => '₹' + Math.abs(Number(n)).toLocaleString('en-IN');
   const isToday = (ts) => new Date(ts).toDateString() === new Date().toDateString();
   const hhmm = (ts) => new Date(ts).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
-  const ago = (ts) => { const m = Math.round((Date.now() - ts) / 60000); if (m < 1) return 'abhi'; if (m < 60) return m + ' min pehle'; if (isToday(ts)) return 'aaj ' + hhmm(ts); return new Date(ts).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }); };
+  const ago = (ts) => { const m = Math.round((Date.now() - ts) / 60000); if (m < 1) return 'just now'; if (m < 60) return m + ' min ago'; if (isToday(ts)) return 'today ' + hhmm(ts); return new Date(ts).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }); };
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
   const COLORS = ['#22A06B', '#5B6CFF', '#F5A623', '#E5484D', '#0EA5E9', '#9B5DE5', '#16181D'];
   const avatar = (name) => { let h = 0; for (const ch of name) h = (h * 31 + ch.charCodeAt(0)) >>> 0; const ini = name.split(/\s+/).filter((w) => !/^ji$/i.test(w)).map((w) => w[0]).join('').slice(0, 2).toUpperCase() || name[0].toUpperCase(); return `<span class="av" style="background:${COLORS[h % COLORS.length]}">${esc(ini)}</span>`; };
@@ -224,23 +224,23 @@
     $('mCalls').textContent = new Set(d.calls.filter((c) => c.mode === 'caller' && isToday(c.ts)).map((c) => c.session)).size;
 
     $('recent').innerHTML = d.ledger.slice(-5).reverse().map((e) => `<li class="row">${avatar(e.name)}<div class="row-main"><b>${esc(e.name)}</b><small>${ago(e.ts)}</small></div>
-      <div style="text-align:right"><div class="amt ${e.amount > 0 ? 'due' : 'paid'}">${e.amount > 0 ? '+' : '−'}${rupee(e.amount)}</div><span class="pill ${e.amount > 0 ? 'due' : 'paid'}">${e.amount > 0 ? 'Udhaar' : 'Jama'}</span></div></li>`).join('') || empty('Abhi koi entry nahi. Mic dabake bolo: "Sharma ji ke 2000 baaki"');
+      <div style="text-align:right"><div class="amt ${e.amount > 0 ? 'due' : 'paid'}">${e.amount > 0 ? '+' : '−'}${rupee(e.amount)}</div><span class="pill ${e.amount > 0 ? 'due' : 'paid'}">${e.amount > 0 ? 'Credit' : 'Paid'}</span></div></li>`).join('') || empty('No entries yet. Tap the mic and say: "Sharma ji ke 2000 baaki"');
 
     const q = ($('search').value || '').trim().toLowerCase();
     const list = $('ledgerRows'); list.innerHTML = '';
     const shown = rows.filter((r) => !q || r.name.toLowerCase().includes(q)).sort((a, b) => b.due - a.due);
-    if (!shown.length) list.innerHTML = empty(q ? 'Koi customer nahi mila' : 'Khata khaali hai');
+    if (!shown.length) list.innerHTML = empty(q ? 'No customer found' : 'Ledger is empty');
     shown.forEach((r) => {
       const li = document.createElement('li'); li.className = 'row col';
-      li.innerHTML = `${avatar(r.name)}<div class="row-main"><b>${esc(r.name)}</b><small>Aakhri entry: ${ago(r.last)}</small></div>
-        <div class="amt ${r.due > 0 ? 'due' : 'paid'}">${r.due > 0 ? rupee(r.due) : 'Clear ✓'}</div>
-        ${r.due > 0 ? '<button class="remind" type="button">🔔 Yaad dilao</button>' : ''}<div class="r-actions"></div>`;
+      li.innerHTML = `${avatar(r.name)}<div class="row-main"><b>${esc(r.name)}</b><small>Last entry: ${ago(r.last)}</small></div>
+        <div class="amt ${r.due > 0 ? 'due' : 'paid'}">${r.due > 0 ? rupee(r.due) : 'Settled ✓'}</div>
+        ${r.due > 0 ? '<button class="remind" type="button">🔔 Remind</button>' : ''}<div class="r-actions"></div>`;
       const b = li.querySelector('.remind'); if (b) b.onclick = () => remind(r, li);
       list.appendChild(li);
     });
 
-    $('callbacks').innerHTML = d.callbacks.slice(-8).reverse().map((c) => `<li class="row"><span class="av" style="background:#F5A623">📞</span><div class="row-main"><b>“${esc(c.text)}”</b><small>${ago(c.ts)}</small></div></li>`).join('') || empty('Koi callback nahi');
-    $('callLog').innerHTML = d.calls.filter((c) => c.mode !== 'owner').slice(-15).reverse().map((c) => `<li class="row"><div class="row-main"><b>“${esc(c.text)}”</b><small>${hhmm(c.ts)} · ${c.totalMs} ms</small></div><span class="tag ${esc(c.intent)}">${esc(c.intent)}</span></li>`).join('') || empty('Abhi koi call nahi');
+    $('callbacks').innerHTML = d.callbacks.slice(-8).reverse().map((c) => `<li class="row"><span class="av" style="background:#F5A623">📞</span><div class="row-main"><b>“${esc(c.text)}”</b><small>${ago(c.ts)}</small></div></li>`).join('') || empty('No callbacks');
+    $('callLog').innerHTML = d.calls.filter((c) => c.mode !== 'owner').slice(-15).reverse().map((c) => `<li class="row"><div class="row-main"><b>“${esc(c.text)}”</b><small>${hhmm(c.ts)} · ${c.totalMs} ms</small></div><span class="tag ${esc(c.intent)}">${esc(c.intent)}</span></li>`).join('') || empty('No calls yet');
 
     const unseen = d.alerts.filter((a) => !a.seen);
     $('alertBanner').hidden = !unseen.length;
@@ -265,12 +265,12 @@
   $('textForm').addEventListener('submit', (e) => { e.preventDefault(); const v = $('textInput').value; $('textInput').value = ''; runText(v, callerTurn); });
   document.querySelectorAll('.try').forEach((b) => b.addEventListener('click', () => runText(b.textContent, ownerTurn)));
   document.querySelectorAll('.try2').forEach((b) => b.addEventListener('click', () => runText(b.textContent, callerTurn)));
-  $('newCall').addEventListener('click', () => { callerState = { mode: 'caller' }; session = 's' + Date.now().toString(36); $('bubbles').innerHTML = ''; setStatus($('status'), 'Nayi call. Customer ban ke bolo.'); });
+  $('newCall').addEventListener('click', () => { callerState = { mode: 'caller' }; session = 's' + Date.now().toString(36); $('bubbles').innerHTML = ''; setStatus($('status'), 'New call. Speak as the customer.'); });
   document.querySelectorAll('.seg-btn').forEach((b) => b.addEventListener('click', () => { tone = b.dataset.tone; document.querySelectorAll('.seg-btn').forEach((x) => x.classList.toggle('active', x === b)); }));
   $('search').addEventListener('input', render);
   $('alertDismiss').addEventListener('click', () => S.dismissAlerts());
   $('exportLog').addEventListener('click', () => { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(S.get().calls, null, 2)], { type: 'application/json' })); a.download = 'vaanidesk-calls.json'; a.click(); });
-  $('resetData').addEventListener('click', () => { if (confirm('Saara demo data hata dein?')) S.reset(); });
+  $('resetData').addEventListener('click', () => { if (confirm('Delete all demo data?')) S.reset(); });
 
   S.subscribe(render);
   render();
