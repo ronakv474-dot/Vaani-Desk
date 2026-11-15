@@ -1,7 +1,7 @@
 name = "vaanidesk"
 main = "src/worker.js"
 compatibility_date = "2025-01-01"
-account_id = "cd30ea1fcff983730899f260dcddbac4" # Ronak's own account (Ronakv474@gmail.com), ScentElle nahi
+account_id = "cd30ea1fcff983730899f260dcddbac4"
 
 [assets]
 directory = "public"
