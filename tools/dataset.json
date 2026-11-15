@@ -1,0 +1,22 @@
+[
+  { "say": "Kal shaam paanch baje appointment chahiye", "intent": "book" },
+  { "say": "Haan sahi hai", "intent": "yes" },
+  { "say": "Parso subah gyarah baje doctor se milna hai", "intent": "book" },
+  { "say": "Nahi", "intent": "no" },
+  { "say": "Mera time parso kar do", "intent": "reschedule" },
+  { "say": "Appointment cancel karna hai", "intent": "cancel" },
+  { "say": "Clinic kab khulta hai", "intent": "faq_timing" },
+  { "say": "Fees kitni hai", "intent": "faq_fees" },
+  { "say": "Clinic kahan hai", "intent": "faq_address" },
+  { "say": "Ravivar ko clinic khula hai kya", "intent": "faq_closed" },
+  { "say": "Seene mein bahut dard ho raha hai", "intent": "emergency" },
+  { "say": "Papa ko saans nahi aa rahi", "intent": "emergency" },
+  { "say": "Accident ho gaya hai", "intent": "emergency" },
+  { "say": "Namaste", "intent": "greeting" },
+  { "say": "Mujhe insurance ke baare mein poochna tha", "intent": "unknown" },
+  { "say": "Guruvar ko dopahar teen baje ka slot milega", "intent": "book" },
+  { "say": "கிளினிக் எப்போது திறக்கும்", "intent": "faq_timing" },
+  { "say": "நாளை மாலை ஐந்து மணிக்கு அப்பாயிண்ட்மெண்ட் வேண்டும்", "intent": "book" },
+  { "say": "Sharma ji ke do hazaar baaki (Udhaari tab mein)", "intent": "udhaari_add", "owner": true },
+  { "say": "Sharma ji ne de diye (Udhaari tab mein)", "intent": "udhaari_paid", "owner": true }
+]

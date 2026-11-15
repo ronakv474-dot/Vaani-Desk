@@ -1,0 +1,14 @@
+name = "vaanidesk"
+main = "src/worker.js"
+compatibility_date = "2025-01-01"
+account_id = "cd30ea1fcff983730899f260dcddbac4" # Ronak's own account (Ronakv474@gmail.com), ScentElle nahi
+
+[assets]
+directory = "public"
+
+[vars]
+TTS_VOICE = "Avinash"
+
+# Secret (code/git mein kabhi nahi):
+#   local:  .dev.vars file mein  GNANI_API_KEY=...
+#   live:   npx wrangler secret put GNANI_API_KEY
